@@ -1,0 +1,112 @@
+ИНСТРУКЦИЯ ОТЛАДКИ - ПРОБЛЕМА: СПРИНТ И РЫВОК НЕ РАБОТАЮТ
+===================================================================
+
+ШАГИ ОТЛАДКИ:
+
+1. ЗАПУСТИТЕ ИГУ С НОВЫМ ЛОГИРОВАНИЕМ
+   - Нажмите Play в Unity
+   - Откройте Console (Window > General > Console)
+   - Должны видеть логи с пометкой [GameManager], [PlayerInputHandler], [StaminaSystem], [DashSystem]
+   - Посмотрите на эти логи и найдите проблему
+
+2. ПРОВЕРЬТЕ ЛОГИ ПРИ СТАРТЕ
+   Должны видеть что-то вроде:
+   [GameManager] Added PlayerInputHandler component
+   [GameManager] Added PlayerMovement component
+   [GameManager] Added StaminaSystem component
+   [GameManager] Added DashSystem component
+   [PlayerInputHandler] Input actions initialized. Sprint action: FOUND
+   [StaminaSystem] Initialized with stamina: 100 / 100
+   [DashSystem] Initialized with model: True, stamina: True
+   [GameManager] Player systems initialized successfully
+
+   Если вместо этого видите ошибки, смотрите ЧАСТЬ "ЕСЛИ ОШИБКИ"
+
+3. НАЖМИТЕ SHIFT ВО ВРЕМЯ ИГРЫ
+   - Смотрите в Console
+   - При нажатии Shift должны видеть логи:
+     [PlayerInputHandler] Sprint action is NULL  <- ЭТО ПЛОХО
+     или
+     [DashSystem] Dash pressed! IsDashing: False, Cooldown: 0
+     [DashSystem] DASH ACTIVATED! Direction: (...), Stamina remaining: 70
+     <- ЭТО ХОРОШО
+
+===================================================================
+АНАЛИЗ ЛОГОВ:
+
+СЛУЧАЙ 1: "Sprint action: NOT FOUND" или "Sprint action is NULL"
+Проблема: InputSystem не может найти действие "Sprint"
+Решение:
+  a) Откройте Assets/InputSystem_Actions.inputactions двойным кликом
+  b) В окне Input Actions проверьте что есть действие "Sprint"
+  c) Если нет - добавьте его:
+     - Нажмите + рядом с Player ActionMap
+     - Назовите "Sprint"
+     - Type = Button
+  d) Добавьте Binding для Shift:
+     - В секции Sprint нажмите + в Bindings
+     - Path = <Keyboard>/leftShift
+  e) Сохраните Ctrl+S
+
+СЛУЧАЙ 2: "Dash pressed! IsDashing: False" но потом "Cannot dash: insufficient stamina"
+Проблема: Stamina ниже 30 (нужно минимум 30 для рывка)
+Решение:
+  a) Стойте на месте 5 секунд чтобы энергия восстановилась (регенерирует 20 в сек)
+  b) После восстановления нажмите Shift снова
+
+СЛУЧАЙ 3: "Dash pressed!" но потом ничего нет (нет "DASH ACTIVATED")
+Проблема: Что-то блокирует рывок
+Решение: Смотрите логи чтобы найти причину
+  - Если "already dashing or in cooldown" - подождите 0.5 сек
+  - Если "insufficient stamina" - подождите регенерации
+  - Если "Cannot consume stamina" - энергия не достаточно
+
+СЛУЧАЙ 4: Нет вообще никаких логов от [DashSystem]
+Проблема: DashSystem не инициализирован или не активен
+Решение:
+  a) Убедитесь что у Player есть компонент DashSystem
+     - Выберите Player в Hierarchy
+     - В Inspector ищите компонент "Dash System"
+     - Если нет - что-то пошло не так при инициализации
+  b) Проверьте логи инициализации ([GameManager] Added DashSystem)
+
+===================================================================
+ДОБАВЛЕНИЕ ДИАГНОСТИЧЕСКОГО СКРИПТА:
+
+Если логи не помогают, используйте диагностический скрипт:
+
+1. Выберите Player в Hierarchy
+2. В Inspector нажмите "Add Component"
+3. Ищите скрипт "InputDiagnostics" и добавьте
+4. Нажмите Play
+5. Откройте Console
+6. При нажатии Shift должны видеть: "SPRINT PRESSED THIS FRAME"
+
+Если этого не видите - проблема в InputSystem, а не в наших скриптах
+
+===================================================================
+ЕСЛИ ВСЕ ЕЩЕ НЕ РАБОТАЕТ - ПОЛНАЯ ПЕРЕИНИЦИАЛИЗАЦИЯ:
+
+1. Удалите все компоненты с Player:
+   - PlayerInputHandler
+   - PlayerMovement
+   - StaminaSystem
+   - DashSystem
+   - InputDiagnostics (если добавили)
+
+2. Выберите GameManager и удалите компонент GameManager
+
+3. Создайте новый пустой объект, назовите "GameManager"
+4. Добавьте компонент GameManager к нему
+
+5. Нажмите Play - системы должны пересоздаться автоматически
+
+===================================================================
+БЫСТРАЯ ПРОВЕРКА РАБОТОСПОСОБНОСТИ:
+
+После каждого шага нажимайте Play и проверяйте:
+1. Видны ли логи инициализации?
+2. Нажимаете Shift - видны ли логи dash pressed?
+3. Видны ли логи DASH ACTIVATED или причина почему не активирован?
+
+===================================================================

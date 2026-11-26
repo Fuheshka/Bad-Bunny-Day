@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -598733035, guid: 3443de304f7fcb5b983b6b15f1bbfadf, type: 3}
+  m_Name: GameSettingsInstaller
+  m_EditorClassIdentifier:
+  Ship:
+    StateMoving:
+      moveSpeed: 15
+      rotateSpeed: 1
+      speedForMaxEmisssion: 30
+      maxEmission: 500
+      oscillationFrequency: 1
+      oscillationAmplitude: 0.1
+    StateDead:
+      explosionForce: 15
+    StateStarting:
+      StartOffset: {x: 0, y: 3, z: 0}
+      Amplitude: 0.25
+      Frequency: 5
+  Asteroid:
+    Spawner:
+      minSpeed: 5
+      maxSpeed: 8
+      minScale: 0.7
+      maxScale: 2.5
+      startingSpawns: 13
+      maxSpawns: 36
+      maxSpawnTime: 60
+      maxMass: 7
+      minMass: 3
+    General:
+      massScaleFactor: 0.1
+      maxSpeed: 18
+  AudioHandler:
+    CrashSound: {fileID: 8300000, guid: 0974aee717ee3dc4b92b3a742a019909, type: 3}
+  GameInstaller:
+    ExplosionPrefab: {fileID: 1730242686860875, guid: dcb9da0e310448c47994b7c0121fa96a, type: 2}
+    BrokenShipPrefab: {fileID: 1709254077376921, guid: 4bccbb7f150ea944ab0d3dc87e0d4652, type: 2}
+    AsteroidPrefab: {fileID: 1709254077376921, guid: 817178f3b3aadc249b41bb311ff126a7, type: 2}
+    ShipPrefab: {fileID: 1709254077376921, guid: 989b9c6b999d789499d0cc58f84711e0, type: 2}
